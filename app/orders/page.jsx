@@ -1,31 +1,36 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import moment from 'moment'
 import { CiDeliveryTruck } from 'react-icons/ci'
+import { toast } from 'react-toastify'
 
 import MainLayout from '../layouts/MainLayout'
+import useIsLoading from '../hooks/useIsLoading'
+import { useUser } from '../context/user'
 
 export default function Orders() {
-  const orders = [
-    {
-      id: 1,
-      stripe_id: '1234567',
-      name: 'test',
-      address: 'test',
-      zipcode: 'test',
-      city: 'test',
-      country: 'test',
-      total: 1299,
-      orderItem: [
-        {
-          id: 1,
-          title: 'School Books',
-          url: 'https://picsum.photos/id/20',
-        },
-      ],
-    },
-  ]
+  const { user } = useUser()
+  const [orders, setOrders] = useState([])
+
+  const getOrders = async () => {
+    try {
+      if (!user && !user?.id) return
+      const response = await fetch('/api/orders')
+      const result = await response.json()
+      setOrders(result)
+      useIsLoading(false)
+    } catch (error) {
+      toast.error('Something went wrong?', { autoClose: 3000 })
+      useIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    useIsLoading(true)
+    getOrders()
+  }, [user])
 
   return (
     <>
@@ -85,10 +90,10 @@ export default function Orders() {
                           <img
                             className='rounded'
                             width='120'
-                            src={item.url + '/120'}
+                            src={item.product.url + '/120'}
                             alt='item'
                           />
-                          {item.title}
+                          {item.product.title}
                         </Link>
                       </div>
                     ))}
