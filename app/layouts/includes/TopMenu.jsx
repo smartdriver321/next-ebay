@@ -4,9 +4,11 @@ import { BsChevronDown } from 'react-icons/bs'
 import { AiOutlineShoppingCart } from 'react-icons/ai'
 
 import { useUser } from '@/app/context/user'
+import { useCart } from '@/app/context/cart'
 
 export default function TopMenu() {
   const user = useUser()
+  const cart = useCart()
 
   const [isMenu, setIsMenu] = useState(false)
 
@@ -96,11 +98,16 @@ export default function TopMenu() {
             <li className='px-3 hover:underline cursor-pointer'>
               <div className='relative'>
                 <AiOutlineShoppingCart size={22} />
-                <div className='absolute text-[10px] -top-[2px] -right-[5px] bg-red-500 w-[14px] h-[14px] rounded-full text-white'>
-                  <div className=' flex items-center justify-center -mt-[1px]'>
-                    5
+
+                {cart.cartCount() > 0 ? (
+                  <div className='absolute text-[10px] -top-[2px] -right-[5px] bg-red-500 w-[14px] h-[14px] rounded-full text-white'>
+                    <div className=' flex items-center justify-center -mt-[1px]'>
+                      {cart.cartCount()}
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div></div>
+                )}
               </div>
             </li>
           </ul>

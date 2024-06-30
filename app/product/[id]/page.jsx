@@ -1,9 +1,14 @@
 'use client'
 
-import SimilarProducts from '@/app/components/SimilarProducts'
+import { toast } from 'react-toastify'
+
 import MainLayout from '../../layouts/MainLayout'
+import SimilarProducts from '@/app/components/SimilarProducts'
+import { useCart } from '@/app/context/cart'
 
 export default function Product({ params }) {
+  const cart = useCart()
+
   const product = {
     id: 1,
     title: 'Brown Leather Bag',
@@ -55,8 +60,27 @@ export default function Product({ params }) {
                       </div>
                     ) : null}
                   </div>
-                  <button className=' text-white py-2 px-20 rounded-full cursor-pointer bg-[#349BC9]'>
-                    Add To Cart
+
+                  <button
+                    onClick={() => {
+                      if (cart.isItemAdded) {
+                        cart.removeFromCart(product)
+                        toast.info('Removed from cart', { autoClose: 3000 })
+                      } else {
+                        cart.addToCart(product)
+                        toast.success('Added to cart', { autoClose: 3000 })
+                      }
+                    }}
+                    className={`
+                      text-white py-2 px-20 rounded-full cursor-pointer 
+                      ${
+                        cart.isItemAdded
+                          ? 'bg-[#e9a321] hover:bg-[#bf851a]'
+                          : 'bg-[#3498C9] hover:bg-[#0054A0]'
+                      }
+                    `}
+                  >
+                    {cart.isItemAdded ? 'Remove From Cart' : 'Add To Cart'}
                   </button>
                 </div>
               </div>
